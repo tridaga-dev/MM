@@ -1,0 +1,197 @@
+Ниже — готовое ТЗ по мета-разметке + тексты (RU/EN) для превью и SEO. Вставляй как частичный шаблон в <head> и подставляй локаль/данные.
+
+ТЗ: META / OG / SEO
+
+Цели: единые мета для всего сайта, локализация RU/EN, корректные превью (WhatsApp/Telegram/FB/Twitter), структурированные данные, каноникал/альтернативы, robots/sitemap.
+
+1) Базовые мета в <head>
+
+charset, viewport, theme-color=#0B1220, color-scheme=dark light
+
+title, description (локализованные)
+
+canonical (на каждую страницу)
+
+link rel="alternate" hreflang="ru|en|x-default"
+
+2) Open Graph
+
+og:type: website (главная), product (тарифы)
+
+og:site_name: MonkeyMachine
+
+og:locale: ru_RU / en_US
+
+og:url, og:title, og:description
+
+og:image (1200×630), og:image:width, og:image:height, og:image:alt
+
+3) Twitter
+
+twitter:card=summary_large_image
+
+twitter:title, twitter:description, twitter:image, twitter:image:alt
+
+4) JSON-LD (Schema.org)
+
+Вставляем Organization, WebSite, SoftwareApplication (WebApplication) с офферами (тарифами). Локализуем name/description, цены — RUB.
+
+5) Robots / Sitemap
+
+robots.txt: User-agent: * → Allow: /, Sitemap: https://monkeymachine.ru/sitemap.xml
+
+Автогенерация sitemap.xml (главная, тарифы, блог/FAQ — когда появится)
+
+6) Валидация превью
+
+Проверки: FB Sharing Debugger, Twitter Card Validator, LinkedIn Post Inspector, Telegram instant view (бот), «Поделиться» в WhatsApp.
+
+Готовые тексты (RU/EN)
+Короткие «боль»-слоганы (для превью/героя)
+
+RU
+
+«Бизнес — вам. Контент — нам.»
+
+«Включи — и посты едут.»
+
+«Меньше рутины — больше выручки.»
+
+«Monkey → Money: один клик.»
+
+«Контент-завод включён.»
+
+EN
+
+“You run the business. We run the content.”
+
+“Click once — and posts roll.”
+
+“Less routine. More revenue.”
+
+“From Monkey to Money in one click.”
+
+“Your content factory, on.”
+
+Описания для OG/Twitter (90–140 знаков)
+
+RU #1 (универсальное): «Ты занимаешься бизнесом — мы запускаем контент-машину: посты, ответы, медиа и расписание, без рутины.»
+
+RU #2 (короче): «Один клик — и контент едет сам: посты, ответы, медиа, расписание.»
+
+EN #1: “You focus on the business — we run the content: posts, replies, media, scheduling. No routine.”
+
+EN #2: “One click and your content runs itself—posts, replies, media, scheduling.”
+
+SEO-title (до ~60 знаков)
+
+RU: MonkeyMachine — контент-машина для бизнеса (Telegram и не только)
+
+EN: MonkeyMachine — your content machine for business
+
+Meta-description (до ~155–165 знаков)
+
+RU: Управляем контентом и ответами: посты, изображения, видео, расписание, аналитика. Интеграции как аддоны. Вы — о бизнесе, мы — о контенте.
+
+EN: We run content and replies: posts, images, video, scheduling, analytics. Integrations as add-ons. You focus on business.
+
+Готовый фрагмент в <head> (ERB, локализуемый)
+<%# app/views/shared/_meta.html.erb %>
+<% site_url   = "https://monkeymachine.ru" %>
+<% page_url   = (content_for?(:canonical) ? yield(:canonical) : request.original_url) %>
+<% locale     = I18n.locale.to_s == "en" ? "en_US" : "ru_RU" %>
+
+<%# Локализованные заголовок/описание %>
+<% title_ru = "MonkeyMachine — контент-машина для бизнеса" %>
+<% desc_ru  = "Ты занимаешься бизнесом — мы запускаем контент-машину: посты, ответы, медиа и расписание, без рутины." %>
+<% title_en = "MonkeyMachine — your content machine for business" %>
+<% desc_en  = "You focus on the business — we run the content: posts, replies, media, scheduling. No routine." %>
+
+<% title = I18n.locale == :en ? title_en : title_ru %>
+<% desc  = I18n.locale == :en ? desc_en  : desc_ru  %>
+
+<% image = image_url("og/og-home-#{I18n.locale}.png") rescue "#{site_url}/assets/maskable_icon-512x512.png" %>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title %></title>
+<meta name="description" content="<%= desc %>">
+<link rel="canonical" href="<%= page_url %>">
+
+<link rel="alternate" href="<%= site_url %>/" hreflang="x-default">
+<link rel="alternate" href="<%= site_url %>/" hreflang="ru">
+<link rel="alternate" href="<%= site_url %>/en" hreflang="en">
+
+<meta name="theme-color" content="#0B1220">
+<meta name="color-scheme" content="dark light">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MonkeyMachine">
+<meta property="og:locale" content="<%= locale %>">
+<meta property="og:url" content="<%= page_url %>">
+<meta property="og:title" content="<%= title %>">
+<meta property="og:description" content="<%= desc %>">
+<meta property="og:image" content="<%= image %>">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MonkeyMachine — контент-машина">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= title %>">
+<meta name="twitter:description" content="<%= desc %>">
+<meta name="twitter:image" content="<%= image %>">
+<meta name="twitter:image:alt" content="MonkeyMachine preview">
+
+<%# Верификации (подставить значения при необходимости) %>
+<%# <meta name="google-site-verification" content="..."> %>
+<%# <meta name="yandex-verification" content="..."> %>
+
+<%# JSON-LD -->
+<script type="application/ld+json">
+<%= {
+  "@context":"https://schema.org",
+  "@type":"Organization",
+  "name":"MonkeyMachine",
+  "url": site_url,
+  "logo":"#{site_url}/maskable_icon-512x512.png",
+  "contactPoint":[
+    {"@type":"ContactPoint","email":"hello@monkeymachine.ru","contactType":"customer support","areaServed":["RU","US"]}
+  ]
+}.to_json.html_safe %>
+</script>
+
+<script type="application/ld+json">
+<%= {
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"MonkeyMachine",
+  "applicationCategory":"BusinessApplication",
+  "operatingSystem":"Web",
+  "url":site_url,
+  "offers":[
+    {"@type":"Offer","name":"Старт","price":"3000","priceCurrency":"RUB","description":"20 постов/мес"},
+    {"@type":"Offer","name":"Буст","price":"5000","priceCurrency":"RUB","description":"ИИ-средний"},
+    {"@type":"Offer","name":"Овердрайв","price":"10000","priceCurrency":"RUB","description":"Сильный ИИ"}
+  ]
+}.to_json.html_safe %>
+</script>
+
+
+Подключение:
+
+<%= render "shared/meta" %>
+
+
+(для страниц — через content_for :canonical можно задать каноникал; для /pricing поставить og:type=product и в JSON-LD детализировать Offers с доп. ценами за изображение/видео).
+
+Тексты для превью (WhatsApp/Telegram)
+
+Поставь в og:title/og:description один из коротких слоганов, напр.:
+
+og:title: «Бизнес — вам. Контент — нам.»
+
+og:description: «Один клик — и контент едет сам: посты, ответы, медиа, расписание.»
+
+Это как раз то, что люди увидят при «Поделиться» в мессенджерах.
